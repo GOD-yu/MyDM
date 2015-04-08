@@ -16,12 +16,11 @@ public abstract class DecisionTree {
 
 	public double getEntropy(DataTable dataTable) {
 		double entropy = 0;
-		DataColumn classClolumn = dataTable.getLastColumn();
+		DataColumn classClolumn = dataTable.columns.getLastColumn();
 		int column_length = classClolumn.getColumnValues().size();
 		for (int i = 0; i < column_length; i++) {
-			double temp = (double) classClolumn.getColumnValues().get(i)
-					.getCount()
-					/ (double) classClolumn.getSize();
+			double temp = (double) classClolumn.getCellsIndex(i).size()
+					/ (double) classClolumn.size();
 			entropy += (-log2(temp) * temp);
 		}
 		return entropy;

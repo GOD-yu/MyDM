@@ -3,6 +3,7 @@ package classify.decisiontree;
 import java.util.HashMap;
 import java.util.TreeMap;
 
+import data.DataColumnValue;
 import data.DataTable;
 import data.DataTableSearch;
 
@@ -22,24 +23,25 @@ public class C4_5 extends DecisionTree {
 			return;
 		}
 		DataTable dt = null;
-		if (parent.getColumns().size() != 1 && this.getEntropy(parent) != 0) {
+		if (parent.columns.getColumns().size() != 1
+				&& this.getEntropy(parent) != 0) {
 			TreeMap<Double, Integer> entropys_sort = new TreeMap<Double, Integer>();
 			HashMap<Integer, HashMap<Integer, DataTable>> entropys_tables = new HashMap<Integer, HashMap<Integer, DataTable>>();
 			DataTableSearch dataTableSearch = new DataTableSearch(parent);
-			int length = parent.getColumns().size() - 1;
+			int length = parent.columns.getColumns().size() - 1;
 			for (int i = 0; i < length; i++) {// 属性列
 				HashMap<Integer, DataTable> col_table = new HashMap<Integer, DataTable>();
 				double entropys_one = 0;
-				for (int ii = 0; ii < parent.getColumn(i).getColumnValues()
-						.size(); ii++) {// 每个属性的所有属性值
+				for (int ii = 0; ii < parent.columns.getColumn(i)
+						.getColumnValues().size(); ii++) {// 每个属性的所有属性值
 					col_table.put(
 							ii,
-							dataTableSearch.GetChildDataTable(i, parent
+							dataTableSearch.GetChildDataTable(i, parent.columns
 									.getColumn(i).getColumnValues().get(ii)
 									.toString()));
-					entropys_one += (((double) parent.getColumn(i)
-							.getColumnValues().get(ii).getCount() / (double) parent
-							.getColumn(i).getSize()) * getEntropy(col_table
+					entropys_one += (((double) parent.columns.getColumn(i)
+							.getCellsIndex(ii).size() / (double) parent.columns
+							.getColumn(i).size()) * getEntropy(col_table
 							.get(ii)));
 				}
 				entropys_tables.put(i, col_table);
@@ -50,17 +52,17 @@ public class C4_5 extends DecisionTree {
 			HashMap<Integer, DataTable> next_tables = entropys_tables
 					.get(next_col);
 			DecisionTreeRoot root_now = new DecisionTreeRoot(root_parent,
-					value_parent, parent.getColumn(next_col).getColumnName());
+					value_parent, parent.columns.getColumn(next_col)
+							.getColumnName());
 			for (int next_next_col : next_tables.keySet()) {
 				DataTable next_dt = next_tables.get(next_next_col);
-				run(next_dt, root_now, parent.getColumn(next_col)
+				run(next_dt, root_now, parent.columns.getColumn(next_col)
 						.getColumnValues().get(next_next_col).toString());
 			}
 		} else {
 			DecisionTreeRoot root_now = new DecisionTreeRoot(root_parent,
-					value_parent, parent.getLastColumn().getColumnValues()
+					value_parent, parent.columns.getLastColumn().getColumnValues()
 							.get(0).toString());
 		}
 	}
-
 }

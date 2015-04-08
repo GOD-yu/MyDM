@@ -2,26 +2,22 @@ package data;
 
 public class DataCell {
 	private Object value;
-	private DataAdapter dataAdapter;
 
-	public DataCell(Object obj, DataAdapter adapter) {
-		this.dataAdapter = adapter;
-		this.value = dataAdapter.Adaptate(obj);
+	public DataCell(Object value) {
+		this.value = value;
 	}
 
-	public int bind(DataRow row, DataColumn column) {
+	public boolean bind(DataRow row, DataColumn column) {
 		if (this.value == null) {
-			return -1;
-		} else if (!column.getDataAdapter().equals(this.dataAdapter)) {
-			return -1;
+			return false;
 		} else {
 			if (column != null && row != null) {
-				int index = column.getValueIndex(this.value);
+				// int index = column.getValueIndex(this.value);
 				row.bindCell(column, this);
 				column.bindCell(row, this);
-				return index;
+				return true;
 			} else {
-				return -1;
+				return false;
 			}
 		}
 	}

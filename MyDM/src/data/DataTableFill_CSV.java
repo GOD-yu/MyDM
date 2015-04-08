@@ -3,6 +3,7 @@ package data;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.Vector;
 
 public class DataTableFill_CSV {
 	private String dirName;
@@ -17,6 +18,7 @@ public class DataTableFill_CSV {
 		FileInputStream fis = null;
 		InputStreamReader isr = null;
 		BufferedReader br = null;
+		Vector<DataAdapter> da = new Vector<DataAdapter>();
 		DataAdapterCreater dac = new DataAdapterCreater();
 		// 添加列
 		try {
@@ -26,7 +28,8 @@ public class DataTableFill_CSV {
 			br = new BufferedReader(isr);
 			while ((str = br.readLine()) != null) {
 				String[] ss = str.split(",");
-				dataTable.addColumn(ss[0], dac.createDataAdapter(ss[1]));
+				dataTable.addColumn(ss[0]);
+				da.add(dac.createDataAdapter(ss[1]));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -41,7 +44,7 @@ public class DataTableFill_CSV {
 		}
 		// 添加行
 		try {
-			String str = "";
+			String str;
 			fis = new FileInputStream(dirName + filename + ".csv");// FileInputStream
 			isr = new InputStreamReader(fis);
 			br = new BufferedReader(isr);
@@ -49,10 +52,9 @@ public class DataTableFill_CSV {
 			while ((str = br.readLine()) != null) {
 				String[] ss = str.split(",");
 				dataTable.addRow();
-				for (int i = 0; i < dataTable.getColumns().size(); i++) {
-					dc = new DataCell(ss[i], dataTable.getColumn(i)
-							.getDataAdapter());
-					dc.bind(dataTable.getLastRow(), dataTable.getColumn(i));
+				for (int i = 0; i < dataTable.columns.size(); i++) {
+					dc = new DataCell(da.get(i).adaptate(ss[i]));
+					dc.bind(dataTable.rows.getLastRow(), dataTable.columns.getColumn(i));
 				}
 			}
 		} catch (Exception e) {
