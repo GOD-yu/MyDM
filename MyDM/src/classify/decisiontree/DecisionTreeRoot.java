@@ -33,18 +33,6 @@ public class DecisionTreeRoot {
 		}
 	}
 
-	static public void print2(DecisionTreeRoot root) {
-		print2(root, "");
-	}
 
-	static public void print2(DecisionTreeRoot root, String line) {
-		line = line + String.format("%s->%s:", root.parent_value, root.name);
-		if (root.next.size() == 0) {
-			System.out.println(line.substring(0, line.length() - 1));
-		}
-		DecisionTreeRoot node;
-		for (String v : root.next.keySet()) {
-			print2(root.next.get(v), line);
-		}
-	}
+	
 }

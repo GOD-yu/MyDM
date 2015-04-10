@@ -2,7 +2,6 @@ package data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
 
 public class DataColumn {
 	private String columnName; // ÁĞÃû

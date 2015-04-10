@@ -1,36 +1,44 @@
 package test;
 
+import classify.decisiontree.C4_5;
 import classify.decisiontree.DecisionTree;
-import classify.decisiontree.DecisionTreeRoot;
+import classify.decisiontree.DecisionTreeAlgorithm;
 import classify.decisiontree.ID3;
 import time.Timer;
-import data.DataAdapter;
-import data.DataAdapter_String;
-import data.DataColumn;
-import data.DataColumnCollection;
 import data.DataTable;
 import data.DataTableFill_CSV;
-import data.DataTableSearch;
+import file.FileWriter;
 
 public class Test {
 
 	public static void main(String[] args) {
-		Timer t = new Timer();
-		t.start();
 		DataTableFill_CSV fill = new DataTableFill_CSV(
-				"D:/Workspace/UCI_DataSet/weather/");
-		DataTable dt = fill.Fill("weather");
+				"D:/Workspace/UCI_DataSet/votes/");
+		DataTable dt1 = fill.Fill("votes-data");
+		DataTable dt2 = fill.Fill("votes-test");
+		FileWriter fw = new FileWriter("D:/Workspace/UCI_DataSet/votes/res");
 
-		System.out.println(dt);
+		Timer t = new Timer();
+		fw.writeLine("=====ID3-start=====");
+		t.start();
+		DecisionTreeAlgorithm decisiontreealgorithm = new ID3();
+		decisiontreealgorithm.load(dt1);
+		DecisionTree tree = decisiontreealgorithm.create();
+		fw.writeLine(t.getRunTime() + "ms");
+		fw.writeLine(tree.test(dt2));
+		fw.writeLine(t.getRunTime() + "ms");
+		fw.writeLine("=====ID3-end=====");
+		fw.writeLine("=====C4.5-start=====");
+		t.start();
+		decisiontreealgorithm = new C4_5();
+		decisiontreealgorithm.load(dt1);
+		tree = decisiontreealgorithm.create();
+		fw.writeLine(t.getRunTime() + "ms");
+		fw.writeLine(tree.test(dt2));
+		fw.writeLine(t.getRunTime() + "ms");
+		fw.writeLine("=====C4.5-end=====");
 
-		DecisionTree id3 = new ID3();
-		id3.load(dt);
-
-		DecisionTreeRoot.print1(id3.create());
-		DecisionTreeRoot.print2(id3.create());
-
-		System.out.println(t.getRunTime() + "ms");
-
+		fw.close();
 	}
 
 }

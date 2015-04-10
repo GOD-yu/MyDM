@@ -1,8 +1,5 @@
 package data;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 public class DataTable {
 	private String tableName;// ±íÃû
 	public DataRowCollection rows;// ÐÐ

@@ -1,9 +1,8 @@
 package data;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.util.Vector;
+
+import file.FileReader;
 
 public class DataTableFill_CSV {
 	private String dirName;
@@ -14,60 +13,30 @@ public class DataTableFill_CSV {
 
 	public DataTable Fill(String filename) {
 		DataTable dataTable = new DataTable(filename);
-
-		FileInputStream fis = null;
-		InputStreamReader isr = null;
-		BufferedReader br = null;
 		Vector<DataAdapter> da = new Vector<DataAdapter>();
 		DataAdapterCreater dac = new DataAdapterCreater();
-		// 添加列
-		try {
-			String str = "";
-			fis = new FileInputStream(dirName + filename + ".head");// FileInputStream
-			isr = new InputStreamReader(fis);
-			br = new BufferedReader(isr);
-			while ((str = br.readLine()) != null) {
-				String[] ss = str.split(",");
-				dataTable.addColumn(ss[0]);
-				da.add(dac.createDataAdapter(ss[1]));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				br.close();
-				isr.close();
-				fis.close();
-			} catch (Exception e) {
-				e.printStackTrace();
+		String str = "";
+
+		FileReader rd = new FileReader(dirName + filename + ".head");
+		while ((str = rd.readLine(false)) != null) {
+			String[] ss = str.split(",");
+			dataTable.addColumn(ss[0]);
+			da.add(dac.createDataAdapter(ss[1]));
+		}
+		rd.close();
+
+		DataCell dc;
+		rd = new FileReader(dirName + filename + ".csv");
+		while ((str = rd.readLine(false)) != null) {
+			String[] ss = str.split(",");
+			dataTable.addRow();
+			for (int i = 0; i < dataTable.columns.size(); i++) {
+				dc = new DataCell(da.get(i).adaptate(ss[i]));
+				dc.bind(dataTable.rows.getLastRow(),
+						dataTable.columns.getColumn(i));
 			}
 		}
-		// 添加行
-		try {
-			String str;
-			fis = new FileInputStream(dirName + filename + ".csv");// FileInputStream
-			isr = new InputStreamReader(fis);
-			br = new BufferedReader(isr);
-			DataCell dc;
-			while ((str = br.readLine()) != null) {
-				String[] ss = str.split(",");
-				dataTable.addRow();
-				for (int i = 0; i < dataTable.columns.size(); i++) {
-					dc = new DataCell(da.get(i).adaptate(ss[i]));
-					dc.bind(dataTable.rows.getLastRow(), dataTable.columns.getColumn(i));
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				br.close();
-				isr.close();
-				fis.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+		rd.close();
 
 		return dataTable;
 	}
